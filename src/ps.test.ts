@@ -19,7 +19,7 @@ describe('ps', function () {
 			error = err
 		})
 
-		await delay(100)
+		await delay(1000)
 		const result = await ps()
 
 		if (error) {
