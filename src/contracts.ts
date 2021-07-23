@@ -5,3 +5,13 @@ export type TProcess = {
 	command: string,
 	// argv: string[],
 }
+
+export interface TProcessNode extends TProcess {
+	parents: number[],
+	childs: number[],
+	allChilds: number[],
+}
+
+export type TProcessTree = {
+	[pid: number]: TProcessNode
+}
