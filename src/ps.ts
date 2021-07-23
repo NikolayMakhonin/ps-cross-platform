@@ -17,21 +17,21 @@ function getProcessTree(processes: TProcess[]): TProcessTree {
 		return a
 	}, {})
 
-	function fillParents(process: TProcessNode): number[] {
-		if (!process.parentIds) {
-			if (process.ppid === 0) {
-				process.parentIds = []
+	function fillParents(proc: TProcessNode): number[] {
+		if (!proc.parentIds) {
+			if (proc.ppid === 0) {
+				proc.parentIds = []
 			} else {
-				const parent = processesTree[process.ppid]
-				process.parentIds = []
-				process.parentIds = parent
-					? [process.ppid, ...fillParents(parent)]
-					: [process.ppid]
+				const parent = processesTree[proc.ppid]
+				proc.parentIds = []
+				proc.parentIds = parent
+					? [proc.ppid, ...fillParents(parent)]
+					: [proc.ppid]
 			}
-			process.childIds = []
-			process.allChildIds = []
+			proc.childIds = []
+			proc.allChildIds = []
 		}
-		return process.parentIds
+		return proc.parentIds
 	}
 
 	// fill parents
@@ -41,9 +41,9 @@ function getProcessTree(processes: TProcess[]): TProcessTree {
 
 	// fill childs
 	for (let i = 0, len = processes.length; i < len; i++) {
-		const process = processes[i]
-		const pid = process.pid
-		const parentIds = (process as TProcessNode).parentIds
+		const proc = processes[i]
+		const pid = proc.pid
+		const parentIds = (proc as TProcessNode).parentIds
 		for (let j = 0, len2 = parentIds.length; j < len2; j++) {
 			const parent = processesTree[parentIds[j]]
 			if (parent) {
