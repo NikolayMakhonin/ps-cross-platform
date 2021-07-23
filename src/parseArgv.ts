@@ -77,7 +77,7 @@ export function argvToString(argv: string[]): string {
 	return argv
 		.map(arg => {
 			arg = arg.replace(/["\\]/g, '\\$&')
-			if (/\s/.test(arg)) {
+			if (!arg || /\s/.test(arg)) {
 				return '"' + arg + '"'
 			}
 			return arg
