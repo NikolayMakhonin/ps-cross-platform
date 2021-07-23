@@ -1,37 +1,72 @@
 export function parseArgv(commandLine: string): string[] {
+	const QUOTE = 34
+	const BACK_SLASH = 92
+	const SPACE = 32
+	const TAB = 9
+
 	const argv: string[] = []
 	const arg: number[] = []
 	let argNotNull = false
-	let quotes = 0
+	let prevCh = 0
+	let quoteOpened = false
 	for (let i = 0, len = commandLine.length; i < len; i++) {
 		const ch = commandLine.charCodeAt(i)
-		// quote
-		if (ch === 34) {
-			argNotNull = true
-			quotes++
-			if (quotes === 3) {
-				quotes = 1
+		if (prevCh === BACK_SLASH) {
+			if (ch === BACK_SLASH || ch === QUOTE) {
 				arg.push(ch)
-			}
-		} else if (quotes === 1) {
-			arg.push(ch)
-		} else {
-			quotes = 0
-			// space or tab
-			if (ch === 32 || ch === 9) {
-				if (argNotNull) {
-					argNotNull = false
-					argv.push(String.fromCharCode(...arg))
-					arg.length = 0
-				}
+				prevCh = 0
+				continue
 			} else {
-				argNotNull = true
-				arg.push(ch)
+				arg.push(BACK_SLASH)
 			}
 		}
+
+		if (prevCh === QUOTE) {
+			if (ch === QUOTE) {
+				arg.push(ch)
+				prevCh = 0
+				continue
+			} else {
+				quoteOpened = false
+			}
+		}
+
+		if (ch === BACK_SLASH) {
+			if (i === len - 1) {
+				arg.push(ch)
+				break
+			}
+			prevCh = ch
+			continue
+		}
+
+		if (ch === QUOTE) {
+			if (!quoteOpened) {
+				argNotNull = true
+				quoteOpened = true
+				prevCh = 0
+				continue
+			}
+
+			prevCh = ch
+			continue
+		}
+
+		if (!quoteOpened && (ch === SPACE || ch === TAB)) {
+			if (arg.length || argNotNull) {
+				argNotNull = false
+				argv.push(String.fromCharCode(...arg))
+				arg.length = 0
+			}
+			prevCh = 0
+			continue
+		}
+
+		arg.push(ch)
+		prevCh = 0
 	}
 
-	if (argNotNull) {
+	if (arg.length || argNotNull) {
 		argv.push(String.fromCharCode(...arg))
 	}
 

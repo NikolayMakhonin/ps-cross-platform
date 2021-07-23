@@ -13,8 +13,8 @@ describe('parseArgv', function () {
 
 	it('base', async function () {
 		test(
-			'echo   """" """""""" q""w""""e   -\t--   " "" "\t \t" "',
-			['echo', '"', '"""', 'qw"e', '-', '--', ' " ', ' '],
+			'echo   q""w""""e """" """"""""   -\t--   " "" "\t \t" "',
+			['echo', 'qw"e', '"', '"""', '-', '--', ' " ', ' '],
 		)
 		test(
 			'" echo\t"   "\t"" " "q""w""e""r" q" "w"" ""e',
@@ -31,6 +31,10 @@ describe('parseArgv', function () {
 		test(
 			'"a" "  ',
 			['a', '  '],
+		)
+		test(
+			'\\ \\i \\" \\\\',
+			['\\', '\\i', '"', '\\'],
 		)
 	})
 })

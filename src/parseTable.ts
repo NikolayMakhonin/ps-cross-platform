@@ -2,26 +2,33 @@ export type TRow = { [key: string] : string }
 
 export function parseTable(str: string): TRow[] {
 	const lines = str.split('\n')
-	let header: string[]
+	const cellLengths: number[] = []
+	const names: string[] = []
 	const rows: TRow[] = []
 	for (let lineIndex = 0, linesCount = lines.length; lineIndex < linesCount; lineIndex++) {
-		const line = lines[lineIndex].trim()
-		if (!line) {
+		const line = lines[lineIndex]
+		if (!line.trim()) {
 			continue
 		}
 
-		const cells = line.split(/\s+/)
-
-		if (!header) {
-			header = cells
+		if (names.length === 0) {
+			const cells = line.split(/\b(?=\S)/)
+			for (let i = 0; i < cells.length; i++) {
+				const cell = cells[i]
+				cellLengths.push(cell.length)
+				names.push(cell.trim())
+			}
 			continue
 		}
 
 		const row: TRow = {}
-		for (let i = 0, len = cells.length; i < len; i++) {
-			const name = header[i]
-			const value = cells[i]
-			row[name] = value
+		let strPos = 0
+		for (let i = 0, len = names.length; i < len; i++) {
+			const name = names[i]
+			const prevStrPos = strPos
+			strPos += cellLengths[i]
+			const value = line.substring(prevStrPos, i === len - 1 ? void 0 : strPos)
+			row[name] = value.trim()
 		}
 
 		rows.push(row)
