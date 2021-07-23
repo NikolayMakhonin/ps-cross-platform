@@ -11,7 +11,7 @@ describe('ps', function () {
 	}
 
  	it('base', async function () {
- 		const command = `setTimeout(function() { console.log('Completed') }, 50000)`
+ 		const command = `setTimeout(function() { console.log("Completed") }, 50000)`
 		const proc = spawn('node', ['-e', command])
 
 		let error
