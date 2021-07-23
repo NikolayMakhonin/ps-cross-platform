@@ -11,7 +11,7 @@ describe('ps', function () {
 	}
 
  	it('base', async function () {
- 		const command = `setTimeout(function() { console.log("Completed") }, 50000)`
+ 		const command = `setTimeout(function() { console.log('Completed') }, 50000)`
 		const proc = spawn('node', ['-e', command])
 
 		let error
@@ -39,12 +39,13 @@ describe('ps', function () {
 			assert.ok(Number.isFinite(item.pid), 'item.pid=' + item.pid)
 			assert.ok(Number.isFinite(item.ppid), 'item.ppid=' + item.ppid)
 			assert.ok(typeof item.command === 'string', 'item.command=' + item.command)
-			assert.ok(Array.isArray(item.argv), 'item.argv=' + item.argv)
-			item.argv.forEach(arg => {
-				assert.ok(typeof arg === 'string', 'arg=' + arg)
-			})
+			// assert.ok(Array.isArray(item.argv), 'item.argv=' + item.argv)
+			// item.argv.forEach(arg => {
+			// 	assert.ok(typeof arg === 'string', 'arg=' + arg)
+			// })
 		})
-		assert.ok(result.some(o => o.argv[2] === command))
+		// assert.ok(result.some(o => o.argv[2] === command))
+		assert.ok(result.some(o => o.command.indexOf(command) >= 0))
 
 		proc.kill('SIGTERM')
 	})

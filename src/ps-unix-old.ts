@@ -2,7 +2,7 @@ import {spawn} from 'child_process'
 import {waitProcessData} from './spawn'
 import {TProcess} from './contracts'
 import {parseTable} from './parseTable'
-import {parseArgv} from './parseArgv'
+// import {parseArgv} from './parseArgv'
 
 // The `ps-tree` module behaves differently on *nix vs. Windows
 // by spawning different programs and parsing their output.
@@ -39,7 +39,7 @@ export async function psUnix(): Promise<TProcess[]> {
       pid    : parseInt(row.PID, 10),
       ppid   : parseInt(row.PPID, 10),
       command: row.COMMAND,
-      argv   : parseArgv(row.COMMAND),
+      // argv   : parseArgv(row.COMMAND),
     }
     return _process
   })

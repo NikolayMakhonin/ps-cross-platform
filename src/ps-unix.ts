@@ -55,7 +55,7 @@ export async function psUnix(): Promise<TProcess[]> {
 				pid,
 				ppid,
 				command,
-				argv,
+				// argv,
 			}
 			return proc
 		} catch (err) {
