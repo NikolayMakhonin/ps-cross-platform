@@ -24,7 +24,7 @@ import {parseArgv} from './parseArgv'
 // /usr/libexec/Use     1    43 Ss
 
 export async function psUnix(): Promise<TProcess[]> {
-  const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,comm=COMMAND'], {})
+  const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {})
 
   const {code, out, err} = await waitProcessData({proc})
 
