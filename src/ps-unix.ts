@@ -39,7 +39,7 @@ export async function psUnix(): Promise<TProcess[]> {
 				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'cmdline'), {encoding: 'utf-8'}, callback)),
 				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'status'), {encoding: 'utf-8'}, callback)),
 			])
-			const ppid = parseInt(status.match(/(?<=(^|[\n\0])[ \t\0]*PPid:[ \t\0]*)\d+\b/ig)[0], 10)
+			const ppid = parseInt(status.match(/(?<=(^|[\n\u0000])[ \t\u0000]*PPid:[ \t\u0000]*)\d+\b/ig)[0], 10)
 			if (!Number.isFinite(ppid)) {
 				console.error('ppid=' + ppid)
 				return null
