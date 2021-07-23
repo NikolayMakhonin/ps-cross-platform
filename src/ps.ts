@@ -23,7 +23,7 @@ function getProcessTree(processes: TProcess[]): TProcessTree {
 				proc.parentIds = []
 			} else {
 				const parent = processesTree[proc.ppid]
-				proc.parentIds = []
+				// proc.parentIds = []
 				proc.parentIds = parent
 					? [proc.ppid, ...fillParents(parent)]
 					: [proc.ppid]
