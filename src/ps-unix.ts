@@ -27,17 +27,24 @@ export async function psUnix(): Promise<TProcess[]> {
 	const dirs = (await asPromise<string[]>(callback => fs.readdir('/proc', callback)))
 
 	const processes = (await Promise.all(dirs.map(async dir => {
+		let cmdline: string
+		let status: string
 		try {
 			const pid = parseInt(dir, 10)
 			if (!Number.isFinite(pid)) {
 				return null
 			}
 
-			const [cmdline, status] = await Promise.all([
+			[cmdline, status] = await Promise.all([
 				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'cmdline'), {encoding: 'utf-8'}, callback)),
 				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'status'), {encoding: 'utf-8'}, callback)),
 			])
 			const ppid = parseInt(status.match(/(?<=(^|\n)PPid: *)\d+\b/i)[0], 10)
+			if (!Number.isFinite(ppid)) {
+				console.error('ppid=' + ppid)
+				return null
+			}
+
 			const argv = cmdline.split('\u0000')
 			const command = argvToString(argv)
 			const proc: TProcess = {
@@ -48,7 +55,7 @@ export async function psUnix(): Promise<TProcess[]> {
 			}
 			return proc
 		} catch (err) {
-			console.error(dir, err)
+			console.error(dir, cmdline, err, status)
 			return null
 		}
 	})))
