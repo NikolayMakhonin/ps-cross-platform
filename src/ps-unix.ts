@@ -46,6 +46,10 @@ export async function psUnix(): Promise<TProcess[]> {
 			}
 
 			const argv = cmdline.replace(/[\s\u0000]+$/g, '').split('\u0000')
+			if (argv.length === 1 && !argv[0]) {
+				argv.length = 0
+			}
+
 			const command = argvToString(argv)
 			const proc: TProcess = {
 				pid,
