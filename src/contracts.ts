@@ -7,9 +7,9 @@ export type TProcess = {
 }
 
 export interface TProcessNode extends TProcess {
-	parents: number[],
-	childs: number[],
-	allChilds: number[],
+	parentIds: number[],
+	childIds: number[],
+	allChildIds: number[],
 }
 
 export type TProcessTree = {

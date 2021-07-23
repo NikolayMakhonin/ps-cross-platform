@@ -83,15 +83,15 @@ describe('ps', function () {
 			assert.ok(Number.isFinite(item.ppid), 'item.ppid=' + item.ppid)
 			assert.strictEqual(pid, item.pid)
 			assert.ok(typeof item.command === 'string', 'item.command=' + item.command)
-			item.childs.forEach(child => {
+			item.childIds.forEach(child => {
 				assert.strictEqual(result[child].ppid, item.pid)
 			})
-			item.parents.forEach((parent, index) => {
+			item.parentIds.forEach((parent, index) => {
 				if (result[parent]) {
 					if (index === 0) {
-						assert.ok(result[parent].childs.indexOf(item.pid) >= 0, 'pid=' + item.pid)
+						assert.ok(result[parent].childIds.indexOf(item.pid) >= 0, 'pid=' + item.pid)
 					}
-					assert.ok(result[parent].allChilds.indexOf(item.pid) >= 0, 'pid=' + item.pid)
+					assert.ok(result[parent].allChildIds.indexOf(item.pid) >= 0, 'pid=' + item.pid)
 				}
 			})
 			// assert.ok(Array.isArray(item.argv), 'item.argv=' + item.argv)
