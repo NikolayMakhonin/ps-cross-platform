@@ -3,7 +3,9 @@ import {waitProcessData} from './spawn'
 import {TProcess} from './contracts'
 import {parseTable} from './parseTable'
 import {argvToString, parseArgv} from './parseArgv'
+import {asPromise} from './helpers'
 import fs from 'fs'
+import path from 'path'
 
 // The `ps-tree` module behaves differently on *nix vs. Windows
 // by spawning different programs and parsing their output.
@@ -25,41 +27,31 @@ import fs from 'fs'
 // /usr/libexec/Use     1    43 Ss
 
 export async function psUnix(): Promise<TProcess[]> {
-	const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {})
+	const dirs = await asPromise<string[]>(callback => fs.readdir('/proc', callback))
 
-	const {code, out, err} = await waitProcessData({proc})
-
-	if (code !== 0) {
-		throw new Error('ps command exited with code ' + code + '\r\n' + err)
-	}
-
-	const table = parseTable(out)
-
-	const processes = await Promise.all(table.map(async row => {
-		const pid = parseInt(row.PID, 10)
-		const argv = await new Promise<string[]>((resolve, reject) => {
-			fs.readFile(`/proc/${pid}/cmdline`, (error, data) => {
-				if (error) {
-					reject(error)
-				} else {
-					resolve(data.toString().split('\u0000'))
-				}
-			})
-		})
-			.catch(() => {
-				return parseArgv(row.COMMAND)
-			})
-
-		const command = argvToString(argv)
-
-		const _process: TProcess = {
-			pid : parseInt(row.PID, 10),
-			ppid: parseInt(row.PPID, 10),
-			command,
-			argv,
+	const processes = (await Promise.all(dirs.map(async dir => {
+		try {
+			const pid = parseInt(dir, 10)
+			const [cmdline, status] = await Promise.all([
+				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'cmdline'), {encoding: 'utf-8'}, callback)),
+				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'status'), {encoding: 'utf-8'}, callback)),
+			])
+			const ppid = parseInt(status.match(/(?<=(^|\n)PPid: *)\d+\b/i)[0], 10)
+			const argv = cmdline.split('\u0000')
+			const command = argvToString(argv)
+			const proc: TProcess = {
+				pid,
+				ppid,
+				command,
+				argv,
+			}
+			return proc
+		} catch (err) {
+			console.error(dir, err)
+			return null
 		}
-		return _process
-	}))
+	})))
+		.filter(o => o)
 
 	return processes
 }
