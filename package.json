@@ -37,7 +37,7 @@
 	"scripts": {
 		"prepublishOnly": "npm run ci",
 		"lint": "eslint \"./src/**/*.ts\"",
-		"build": "tsc",
+		"build": "shx rm -rf dist && tsc",
 		"test": "mocha ./dist/**/*.test.js",
 		"test:watch": "mocha --require ts-node/register ./src/**/*.test.ts --watch",
 		"ci": "npm i && npm run lint && npm run build && npm run test"
@@ -53,6 +53,7 @@
 		"eslint-config-pro": "^2.1.1",
 		"eslint-plugin-sonarjs": "^0.9.1",
 		"mocha": "^9.0.2",
+		"shx": "^0.3.3",
 		"ts-node": "^10.1.0",
 		"typescript": "^4.3.5"
 	}

@@ -1,6 +1,5 @@
 /* eslint-disable no-shadow */
 import assert from 'assert'
-import {parseTable} from './parseTable'
 import {parseArgv} from './parseArgv'
 
 describe('parseArgv', function () {
