@@ -2,7 +2,7 @@ import {spawn} from 'child_process'
 import {waitProcessData} from './spawn'
 import {TProcess} from './contracts'
 import {parseTable} from './parseTable'
-import {argvToString} from './parseArgv'
+import {argvToString, parseArgv} from './parseArgv'
 import fs from 'fs'
 
 // The `ps-tree` module behaves differently on *nix vs. Windows
@@ -25,37 +25,41 @@ import fs from 'fs'
 // /usr/libexec/Use     1    43 Ss
 
 export async function psUnix(): Promise<TProcess[]> {
-  const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {})
+	const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {})
 
-  const {code, out, err} = await waitProcessData({proc})
+	const {code, out, err} = await waitProcessData({proc})
 
-  if (code !== 0) {
-    throw new Error('ps command exited with code ' + code + '\r\n' + err)
-  }
+	if (code !== 0) {
+		throw new Error('ps command exited with code ' + code + '\r\n' + err)
+	}
 
-  const table = parseTable(out)
+	const table = parseTable(out)
 
-  const processes = await Promise.all(table.map(async row => {
-    const pid = parseInt(row.PID, 10)
-    const argv = await new Promise<string[]>((resolve, reject) => {
-      fs.readFile(`/proc/${pid}/cmdline`, (error, data) => {
-        if (error) {
-          reject(error)
-        } else {
-          resolve(data.toString().split('\u0000'))
-        }
-      })
-    })
-    const command = argvToString(argv)
+	const processes = await Promise.all(table.map(async row => {
+		const pid = parseInt(row.PID, 10)
+		const argv = await new Promise<string[]>((resolve, reject) => {
+			fs.readFile(`/proc/${pid}/cmdline`, (error, data) => {
+				if (error) {
+					reject(error)
+				} else {
+					resolve(data.toString().split('\u0000'))
+				}
+			})
+		})
+			.catch(() => {
+				return parseArgv(row.COMMAND)
+			})
 
-    const _process: TProcess = {
-      pid : parseInt(row.PID, 10),
-      ppid: parseInt(row.PPID, 10),
-      command,
-      argv,
-    }
-    return _process
-  }))
+		const command = argvToString(argv)
 
-  return processes
+		const _process: TProcess = {
+			pid : parseInt(row.PID, 10),
+			ppid: parseInt(row.PPID, 10),
+			command,
+			argv,
+		}
+		return _process
+	}))
+
+	return processes
 }
