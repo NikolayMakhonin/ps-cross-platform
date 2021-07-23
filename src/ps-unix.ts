@@ -1,8 +1,5 @@
-import {spawn} from 'child_process'
-import {waitProcessData} from './spawn'
 import {TProcess} from './contracts'
-import {parseTable} from './parseTable'
-import {argvToString, parseArgv} from './parseArgv'
+import {argvToString} from './parseArgv'
 import {asPromise} from './helpers'
 import fs from 'fs'
 import path from 'path'
@@ -27,11 +24,15 @@ import path from 'path'
 // /usr/libexec/Use     1    43 Ss
 
 export async function psUnix(): Promise<TProcess[]> {
-	const dirs = await asPromise<string[]>(callback => fs.readdir('/proc', callback))
+	const dirs = (await asPromise<string[]>(callback => fs.readdir('/proc', callback)))
 
 	const processes = (await Promise.all(dirs.map(async dir => {
 		try {
 			const pid = parseInt(dir, 10)
+			if (!Number.isFinite(pid)) {
+				return null
+			}
+
 			const [cmdline, status] = await Promise.all([
 				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'cmdline'), {encoding: 'utf-8'}, callback)),
 				asPromise<string>(callback => fs.readFile(path.join('/proc', dir, 'status'), {encoding: 'utf-8'}, callback)),
