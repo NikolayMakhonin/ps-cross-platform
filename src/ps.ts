@@ -43,9 +43,9 @@ function getProcessTree(processes: TProcess[]): TProcessTree {
 	for (let i = 0, len = processes.length; i < len; i++) {
 		const process = processes[i]
 		const pid = process.pid
-		const parents = (processes[i] as TProcessNode).parentIds
-		for (let j = 0, len2 = parents.length; j < len2; j++) {
-			const parent = processesTree[parents[j]]
+		const parentIds = (process as TProcessNode).parentIds
+		for (let j = 0, len2 = parentIds.length; j < len2; j++) {
+			const parent = processesTree[parentIds[j]]
 			if (parent) {
 				if (j === 0) {
 					parent.childIds.push(pid)
