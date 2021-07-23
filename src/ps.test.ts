@@ -13,7 +13,7 @@ describe('ps', function () {
  	it('base', async function () {
  		const command = `setTimeout(function() { console.log('Completed') }, 50000)`
 		const proc = spawn('node', ['-e', command])
-
+require('fs').readFile('/proc/1074/cmdline', o => console.log(o))
 		let error
 		proc.on('error', err => {
 			error = err
