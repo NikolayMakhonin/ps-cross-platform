@@ -11,13 +11,18 @@ describe('ps', function () {
 	}
 
  	it('ps', async function () {
- 		const command = `setTimeout(function() { console.log('Completed') }, 50000)`
-		const proc = spawn('node', ['-e', command])
+ 		const command = `setTimeout(function() { console.log('Completed') }, 30000)`
 
+		let proc
 		let error
-		proc.on('error', err => {
-			error = err
-		})
+		function startProc() {
+			proc = spawn('node', ['-e', command])
+			proc.on('error', err => {
+				error = err
+			})
+		}
+
+		startProc()
 
 		await delay(1000)
 		const timeStart = Date.now()
@@ -47,17 +52,25 @@ describe('ps', function () {
 		// assert.ok(result.some(o => o.argv[2] === command))
 		assert.ok(result.some(o => o.command.indexOf(command) >= 0))
 
-		proc.kill('SIGTERM')
+		if (proc) {
+			process.kill(proc.pid, 'SIGKILL')
+			await delay(1000)
+		}
 	})
 
  	it('psTree', async function () {
- 		const command = `setTimeout(function() { console.log('Completed') }, 50000)`
-		const proc = spawn('node', ['-e', command])
+ 		const command = `setTimeout(function() { console.log('Completed') }, 30000)`
 
+		let proc
 		let error
-		proc.on('error', err => {
-			error = err
-		})
+		function startProc() {
+			proc = spawn('node', ['-e', command])
+			proc.on('error', err => {
+				error = err
+			})
+		}
+
+		startProc()
 
 		await delay(1000)
 		const timeStart = Date.now()
@@ -112,6 +125,9 @@ describe('ps', function () {
 		// assert.ok(result.some(o => o.argv[2] === command))
 		assert.ok(Object.values(result).some(o => o.command.indexOf(command) >= 0))
 
-		proc.kill('SIGTERM')
+		if (proc) {
+			process.kill(proc.pid, 'SIGKILL')
+			await delay(1000)
+		}
 	})
 })
