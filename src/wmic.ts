@@ -35,25 +35,27 @@ import {parseTable} from './parseTable'
 // ```
 
 export async function wmic(): Promise<TProcess[]> {
-  const proc = spawn('wmic.exe', ['PROCESS', 'GET', 'ProcessId,ParentProcessId,CommandLine,ExecutablePath,Name'])
+	const proc = spawn('wmic.exe', ['PROCESS', 'GET', 'ProcessId,ParentProcessId,CommandLine,ExecutablePath,Name'], {
+		windowsHide: true,
+	})
 
-  const {code, out, err} = await waitProcessData({proc})
+	const {code, out, err} = await waitProcessData({proc})
 
-  if (code !== 0) {
-    throw new Error('wmic command exited with code ' + code + '\r\n' + err)
-  }
+	if (code !== 0) {
+		throw new Error('wmic command exited with code ' + code + '\r\n' + err)
+	}
 
-  const table = parseTable(out)
+	const table = parseTable(out)
 
-  const processes = table.map(row => {
-    const _process: TProcess = {
-      pid    : parseInt(row.ProcessId, 10),
-      ppid   : parseInt(row.ParentProcessId, 10),
-      command: row.CommandLine,
-      // argv   : parseArgv(row.CommandLine),
-    }
-    return _process
-  })
+	const processes = table.map(row => {
+		const _process: TProcess = {
+			pid    : parseInt(row.ProcessId, 10),
+			ppid   : parseInt(row.ParentProcessId, 10),
+			command: row.CommandLine,
+			// argv   : parseArgv(row.CommandLine),
+		}
+		return _process
+	})
 
-  return processes
+	return processes
 }

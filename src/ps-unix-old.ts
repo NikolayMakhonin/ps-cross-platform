@@ -24,25 +24,27 @@ import {parseTable} from './parseTable'
 // /usr/libexec/Use     1    43 Ss
 
 export async function psUnix(): Promise<TProcess[]> {
-  const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {})
+	const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {
+		windowsHide: true,
+	})
 
-  const {code, out, err} = await waitProcessData({proc})
+	const {code, out, err} = await waitProcessData({proc})
 
-  if (code !== 0) {
-    throw new Error('ps command exited with code ' + code + '\r\n' + err)
-  }
+	if (code !== 0) {
+		throw new Error('ps command exited with code ' + code + '\r\n' + err)
+	}
 
-  const table = parseTable(out)
+	const table = parseTable(out)
 
-  const processes = table.map(row => {
-    const _process: TProcess = {
-      pid    : parseInt(row.PID, 10),
-      ppid   : parseInt(row.PPID, 10),
-      command: row.COMMAND,
-      // argv   : parseArgv(row.COMMAND),
-    }
-    return _process
-  })
+	const processes = table.map(row => {
+		const _process: TProcess = {
+			pid    : parseInt(row.PID, 10),
+			ppid   : parseInt(row.PPID, 10),
+			command: row.COMMAND,
+			// argv   : parseArgv(row.COMMAND),
+		}
+		return _process
+	})
 
-  return processes
+	return processes
 }
