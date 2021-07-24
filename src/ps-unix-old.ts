@@ -34,7 +34,9 @@ export async function psUnix(): Promise<TProcess[]> {
 		throw new Error('ps command exited with code ' + code + '\r\n' + err)
 	}
 
-	const table = parseTable(out)
+	const table = parseTable(out, line => {
+		return !line.startsWith('[')
+	})
 
 	const processes = table.map(row => {
 		const _process: TProcess = {

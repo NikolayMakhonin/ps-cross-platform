@@ -1,13 +1,13 @@
 export type TRow = { [key: string] : string }
 
-export function parseTable(str: string): TRow[] {
+export function parseTable(str: string, filter?: (line: string) => boolean): TRow[] {
 	const lines = str.split('\n')
 	const cellLengths: number[] = []
 	const names: string[] = []
 	const rows: TRow[] = []
 	for (let lineIndex = 0, linesCount = lines.length; lineIndex < linesCount; lineIndex++) {
 		const line = lines[lineIndex]
-		if (!line.trim()) {
+		if (!line.trim() || filter && !filter(line)) {
 			continue
 		}
 
