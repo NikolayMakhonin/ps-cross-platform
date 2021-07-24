@@ -28,7 +28,7 @@ describe('ps', function () {
 
 		await delay(1000)
 		const timeStart = Date.now()
-		const result = await ps()
+		let result = await ps()
 		const duration = Date.now() - timeStart
 		console.log('Duration (ms): ' + duration)
 		assert.ok(duration <= 2000, 'duration=' + duration)
@@ -58,6 +58,10 @@ describe('ps', function () {
 			process.kill(proc.pid, 'SIGKILL')
 			await delay(1000)
 		}
+
+		result = await ps()
+
+		assert.ok(result.every(o => o.command.indexOf(command) < 0))
 	})
 
  	it('psTree', async function () {
@@ -78,7 +82,7 @@ describe('ps', function () {
 
 		await delay(1000)
 		const timeStart = Date.now()
-		const result = await psTree()
+		let result = await psTree()
 		const duration = Date.now() - timeStart
 		console.log('Duration (ms): ' + duration)
 		assert.ok(duration <= 2000, 'duration=' + duration)
@@ -133,5 +137,9 @@ describe('ps', function () {
 			process.kill(proc.pid, 'SIGKILL')
 			await delay(1000)
 		}
+
+		result = await psTree()
+
+		assert.ok(Object.values(result).every(o => o.command.indexOf(command) < 0))
 	})
 })
