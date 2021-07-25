@@ -34,7 +34,7 @@ export async function psUnix(): Promise<TProcess[]> {
 		throw new Error('ps command exited with code ' + code + '\r\n' + err)
 	}
 
-	console.log('ps result\r\n' + out)
+	// console.log('ps result\r\n' + out)
 
 	const table = parseTable({
 		text         : out,
