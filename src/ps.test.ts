@@ -57,6 +57,7 @@ describe('ps', function () {
 
 		const findProcs = result.filter(o => o.command.indexOf(command) >= 0)
 		assert.ok(findProcs, 'findProcs=' + findProcs)
+		console.log('proc.pid=' + proc.pid)
 		console.log(JSON.stringify(findProcs, null, 4))
 		assert.strictEqual(findProcs.length, 1, 'findProc.length=' + findProcs.length)
 		assert.strictEqual(findProcs[0].pid, proc && proc.pid)
@@ -141,6 +142,7 @@ describe('ps', function () {
 
 		const findProcs = Object.values(result).filter(o => o.command.indexOf(command) >= 0)
 		assert.ok(findProcs, 'findProcs=' + findProcs)
+		console.log('proc.pid=' + proc.pid)
 		console.log(JSON.stringify(findProcs, null, 4))
 		assert.strictEqual(findProcs.length, 1, 'findProc.length=' + findProcs.length)
 		assert.strictEqual(findProcs[0].pid, proc && proc.pid)
