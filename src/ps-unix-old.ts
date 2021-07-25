@@ -30,9 +30,11 @@ export async function psUnix(): Promise<TProcess[]> {
 
 	const {code, out, err} = await waitProcessData({proc})
 
-	if (code !== 0) {
+	if (code !== 0 || err.trim()) {
 		throw new Error('ps command exited with code ' + code + '\r\n' + err)
 	}
+
+	console.log('ps result\r\n' + out)
 
 	const table = parseTable(out, line => {
 		return !line.startsWith('[')
