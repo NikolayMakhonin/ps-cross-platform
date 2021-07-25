@@ -17,11 +17,14 @@ describe('ps', function () {
 		let error
 		function startProc() {
 			proc = spawn('node', ['-e', command], {
+				detached: true,
+				stdio: 'ignore',
 				windowsHide: true,
 			})
-			proc.on('error', err => {
-				error = err
-			})
+			proc.unref()
+			// proc.on('error', err => {
+			// 	error = err
+			// })
 		}
 
 		startProc()
@@ -71,11 +74,14 @@ describe('ps', function () {
 		let error
 		function startProc() {
 			proc = spawn('node', ['-e', command], {
+				detached: true,
+				stdio: 'ignore',
 				windowsHide: true,
 			})
-			proc.on('error', err => {
-				error = err
-			})
+			proc.unref()
+			// proc.on('error', err => {
+			// 	error = err
+			// })
 		}
 
 		startProc()
