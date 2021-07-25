@@ -54,13 +54,14 @@ describe('ps', function () {
 			// 	assert.ok(typeof arg === 'string', 'arg=' + arg)
 			// })
 		})
-		// assert.ok(result.some(o => o.argv[2] === command))
-		assert.ok(result.some(o => o.command.indexOf(command) >= 0))
 
-		if (proc) {
-			process.kill(proc.pid, 'SIGINT')
-			await delay(1000)
-		}
+		const findProcs = result.filter(o => o.command.indexOf(command) >= 0)
+		assert.ok(findProcs)
+		assert.strictEqual(findProcs.length, 1, 'findProcs.length=' + findProcs.length)
+		assert.strictEqual(findProcs[0].pid, proc.pid)
+
+		process.kill(findProcs[0].pid, 'SIGINT')
+		await delay(1000)
 
 		result = await ps()
 
@@ -136,13 +137,14 @@ describe('ps', function () {
 			// 	assert.ok(typeof arg === 'string', 'arg=' + arg)
 			// })
 		})
-		// assert.ok(result.some(o => o.argv[2] === command))
-		assert.ok(Object.values(result).some(o => o.command.indexOf(command) >= 0))
 
-		if (proc) {
-			process.kill(proc.pid, 'SIGINT')
-			await delay(1000)
-		}
+		const findProcs = Object.values(result).filter(o => o.command.indexOf(command) >= 0)
+		assert.ok(findProcs)
+		assert.strictEqual(findProcs.length, 1, 'findProc.length=' + findProcs.length)
+		assert.strictEqual(findProcs[0].pid, proc.pid)
+
+		process.kill(findProcs[0].pid, 'SIGINT')
+		await delay(1000)
 
 		result = await psTree()
 
