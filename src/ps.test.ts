@@ -55,7 +55,7 @@ describe('ps', function () {
 		assert.ok(result.some(o => o.command.indexOf(command) >= 0))
 
 		if (proc) {
-			process.kill(proc.pid, 'SIGKILL')
+			process.kill(proc.pid, 'SIGINT')
 			await delay(1000)
 		}
 
@@ -134,7 +134,7 @@ describe('ps', function () {
 		assert.ok(Object.values(result).some(o => o.command.indexOf(command) >= 0))
 
 		if (proc) {
-			process.kill(proc.pid, 'SIGKILL')
+			process.kill(proc.pid, 'SIGINT')
 			await delay(1000)
 		}
 
