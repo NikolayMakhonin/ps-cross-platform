@@ -36,8 +36,19 @@ export async function psUnix(): Promise<TProcess[]> {
 
 	console.log('ps result\r\n' + out)
 
-	const table = parseTable(out, line => {
-		return !line.startsWith('[')
+	const table = parseTable({
+		text         : out,
+		columnDefault: {
+			align: 'right',
+		},
+		columns: {
+			COMMAND: {
+				align: 'left',
+			},
+		},
+		filter(line) {
+			return !line.startsWith('[')
+		},
 	})
 
 	const processes = table.map(row => {

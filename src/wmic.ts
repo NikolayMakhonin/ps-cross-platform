@@ -45,7 +45,12 @@ export async function wmic(): Promise<TProcess[]> {
 		throw new Error('wmic command exited with code ' + code + '\r\n' + err)
 	}
 
-	const table = parseTable(out)
+	const table = parseTable({
+		text         : out,
+		columnDefault: {
+			align: 'left',
+		},
+	})
 
 	const processes = table.map(row => {
 		const _process: TProcess = {
