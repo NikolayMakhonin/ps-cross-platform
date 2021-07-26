@@ -1,6 +1,6 @@
 import {spawn} from 'child_process'
 import {waitProcessData} from './spawn'
-import {IProcess} from './contracts'
+import {TProcess} from './contracts'
 import {parseTable} from './parseTable'
 // import {parseArgv} from './parseArgv'
 
@@ -23,7 +23,7 @@ import {parseTable} from './parseTable'
 // /sbin/launchd        0     1 Ss
 // /usr/libexec/Use     1    43 Ss
 
-export async function psUnix(): Promise<IProcess[]> {
+export async function psUnix(): Promise<TProcess[]> {
 	const proc = spawn('ps', ['-A', '-o', 'ppid=PPID,pid=PID,args=COMMAND'], {
 		windowsHide: true,
 	})
@@ -52,7 +52,7 @@ export async function psUnix(): Promise<IProcess[]> {
 	})
 
 	const processes = table.map(row => {
-		const _process: IProcess = {
+		const _process: TProcess = {
 			pid    : parseInt(row.PID, 10),
 			ppid   : parseInt(row.PPID, 10),
 			command: row.COMMAND,

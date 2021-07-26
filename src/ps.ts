@@ -1,8 +1,8 @@
-import {IProcess, IProcessNode, IProcessTree} from './contracts'
+import {TProcess, TProcessNode, IProcessTree} from './contracts'
 import {psUnix} from './ps-unix-old'
 import {wmic} from './wmic'
 
-export function ps(): Promise<IProcess[]> {
+export function ps(): Promise<TProcess[]> {
 	return process.platform === 'win32' ? wmic() : psUnix()
 }
 
@@ -11,7 +11,7 @@ export async function psTree(): Promise<IProcessTree> {
 	return getProcessTree(processes)
 }
 
-function getProcessTree(processes: IProcess[]): IProcessTree {
+function getProcessTree(processes: TProcess[]): IProcessTree {
 	const processesTree: IProcessTree = processes.reduce((a, o) => {
 		a[o.pid] = o
 		return a
@@ -19,7 +19,7 @@ function getProcessTree(processes: IProcess[]): IProcessTree {
 
 	const _processes = Object.values(processesTree)
 
-	function fillParents(proc: IProcessNode): number[] {
+	function fillParents(proc: TProcessNode): number[] {
 		if (!proc.parentIds) {
 			if (proc.ppid === 0) {
 				proc.parentIds = []
@@ -36,7 +36,7 @@ function getProcessTree(processes: IProcess[]): IProcessTree {
 
 	// fill parents
 	for (let i = 0, len = _processes.length; i < len; i++) {
-		const proc = _processes[i] as IProcessNode
+		const proc = _processes[i] as TProcessNode
 		fillParents(proc)
 		proc.childIds = []
 		proc.allChildIds = []
@@ -46,7 +46,7 @@ function getProcessTree(processes: IProcess[]): IProcessTree {
 	for (let i = 0, len = _processes.length; i < len; i++) {
 		const proc = _processes[i]
 		const pid = proc.pid
-		const parentIds = (proc as IProcessNode).parentIds
+		const parentIds = (proc as TProcessNode).parentIds
 		for (let j = 0, len2 = parentIds.length; j < len2; j++) {
 			const parent = processesTree[parentIds[j]]
 			if (parent) {
