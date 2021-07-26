@@ -1,6 +1,6 @@
 import {spawn} from 'child_process'
 import {waitProcessData} from './spawn'
-import {TProcess} from './contracts'
+import {IProcess} from './contracts'
 import {parseTable} from './parseTable'
 // import {parseArgv} from './parseArgv'
 
@@ -34,7 +34,7 @@ import {parseTable} from './parseTable'
 // smss.exe                      4                228
 // ```
 
-export async function wmic(): Promise<TProcess[]> {
+export async function wmic(): Promise<IProcess[]> {
 	const proc = spawn('wmic.exe', ['PROCESS', 'GET', 'ProcessId,ParentProcessId,CommandLine,ExecutablePath,Name'], {
 		windowsHide: true,
 	})
@@ -53,7 +53,7 @@ export async function wmic(): Promise<TProcess[]> {
 	})
 
 	const processes = table.map(row => {
-		const _process: TProcess = {
+		const _process: IProcess = {
 			pid    : parseInt(row.ProcessId, 10),
 			ppid   : parseInt(row.ParentProcessId, 10),
 			command: row.CommandLine,

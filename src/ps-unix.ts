@@ -1,4 +1,4 @@
-import {TProcess} from './contracts'
+import {IProcess} from './contracts'
 import {argvToString} from './parseArgv'
 import {asPromise} from './helpers'
 import fs from 'fs'
@@ -23,7 +23,7 @@ import path from 'path'
 // /sbin/launchd        0     1 Ss
 // /usr/libexec/Use     1    43 Ss
 
-export async function psUnix(): Promise<TProcess[]> {
+export async function psUnix(): Promise<IProcess[]> {
 	const dirs = (await asPromise<string[]>(callback => fs.readdir('/proc', callback)))
 
 	const processes = (await Promise.all(dirs.map(async dir => {
@@ -51,7 +51,7 @@ export async function psUnix(): Promise<TProcess[]> {
 			}
 
 			const command = argvToString(argv)
-			const proc: TProcess = {
+			const proc: IProcess = {
 				pid,
 				ppid,
 				command,
