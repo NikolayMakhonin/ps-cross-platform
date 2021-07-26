@@ -1,6 +1,6 @@
 {
 	"name": "@flemist/ps-cross-platform",
-	"version": "0.0.9",
+	"version": "0.0.10",
 	"description": "Cross-platform process list with minimum code using ps (for Unix) and wmic (for Windows)",
 	"author": {
 		"name": "Nikolay Makhonin",
