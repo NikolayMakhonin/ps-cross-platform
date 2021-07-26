@@ -1,4 +1,4 @@
-import {TProcess, TProcessNode, IProcessTree} from './contracts'
+import {TProcess, TProcessNode, TProcessTree} from './contracts'
 import {psUnix} from './ps-unix-old'
 import {wmic} from './wmic'
 
@@ -6,13 +6,13 @@ export function ps(): Promise<TProcess[]> {
 	return process.platform === 'win32' ? wmic() : psUnix()
 }
 
-export async function psTree(): Promise<IProcessTree> {
+export async function psTree(): Promise<TProcessTree> {
 	const processes = await ps()
 	return getProcessTree(processes)
 }
 
-function getProcessTree(processes: TProcess[]): IProcessTree {
-	const processesTree: IProcessTree = processes.reduce((a, o) => {
+function getProcessTree(processes: TProcess[]): TProcessTree {
+	const processesTree: TProcessTree = processes.reduce((a, o) => {
 		a[o.pid] = o
 		return a
 	}, {})

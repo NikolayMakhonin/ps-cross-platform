@@ -18,6 +18,6 @@ export interface TProcessNode extends TProcess {
 	allChildIds: number[],
 }
 
-export type IProcessTree = {
+export type TProcessTree = {
 	[pid: number]: TProcessNode
 }
