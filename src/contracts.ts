@@ -13,6 +13,7 @@ export interface TProcess extends TProcessIdentity {
 }
 
 export interface TProcessNode extends TProcess {
+	closed: boolean,
 	parentIds: number[],
 	childIds: number[],
 	allChildIds: number[],
